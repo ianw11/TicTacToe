@@ -5,14 +5,19 @@ import java.util.List;
 
 import io.github.ianw11.gamebase.board.Coordinate;
 import io.github.ianw11.gamebase.engine.BaseRulesEngine;
+import io.github.ianw11.gamebase.engine.GameStateListener;
 import io.github.ianw11.gamebase.io.InputMethod;
 import io.github.ianw11.gamebase.turn.BasePlayer;
 import io.github.ianw11.gamebase.turn.Turn;
 
-public class RulesEngine extends BaseRulesEngine {
+public class RulesEngine extends BaseRulesEngine implements GameStateListener {
    
    public static void main(String[] args) {
-      RulesEngine engine = new RulesEngine();
+      List<BasePlayer> players = new ArrayList<BasePlayer>(2);
+      players.add(new TicTacToePlayer(0, "Player1", mInputMethod, Symbol.X));
+      players.add(new TicTacToePlayer(1, "Player2", mInputMethod, Symbol.O));
+      
+      RulesEngine engine = new RulesEngine(players);
       engine.runGame();
       System.out.println("Done with TicTacToe");
    }
@@ -30,13 +35,10 @@ public class RulesEngine extends BaseRulesEngine {
    }
    private Symbol[][] mGameGrid;
 
-   public RulesEngine() {
-      final List<BasePlayer> players = new ArrayList<BasePlayer>(2);
+   public RulesEngine(final List<BasePlayer> players) {
+      super(players);
       
-      players.add(new TicTacToePlayer(0, "Player1", mInputMethod, Symbol.X));
-      players.add(new TicTacToePlayer(1, "Player2", mInputMethod, Symbol.O));
-      
-      setPlayers(players);
+      addGameStateListener(this);
    }
 
    @Override
@@ -67,14 +69,10 @@ public class RulesEngine extends BaseRulesEngine {
       return true;
    }
    
-   protected void preTurn() {
-      renderToConsole();
-   }
-   
    @Override
-   protected void preGameInit() {
-      mGameGrid = new Symbol[DIMENSION][DIMENSION];
-   }
+   public boolean isRoundOver() {
+      return true;
+   };
    
    @Override
    public boolean isGameOver() {
@@ -86,24 +84,28 @@ public class RulesEngine extends BaseRulesEngine {
       return ret;
    }
    
+   @Override
+   public void onPreTurn() {
+      renderToConsole();
+   }
+   
+   @Override
+   public void onPreGameInit() {
+      mGameGrid = new Symbol[DIMENSION][DIMENSION];
+   }
+   
    /*
     * NO OP METHODS
     */
    
    @Override
-   protected void postTurn() {
-      // no-op
-   }
+   public void onPostTurn() { }
 
    @Override
-   protected void preRound() {
-      // no-op
-   }
+   public void onPreRound() { }
 
    @Override
-   protected void postRound() {
-      // no-op
-   }
+   public void onPostRound() { }
 
    
    /*

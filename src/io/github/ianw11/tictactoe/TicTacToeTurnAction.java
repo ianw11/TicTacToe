@@ -21,8 +21,11 @@ public class TicTacToeTurnAction extends TurnAction {
    @Override
    public TurnActionResult doAction(InputMethod inputMethod) {
       try {
+         System.out.print("Enter X> ");
          int x = inputMethod.nextInt();
+         System.out.print("Enter Y> ");
          int y = inputMethod.nextInt();
+         
          mData = new Coordinate(x, y);
          return TurnActionResult.SUCCESS;
       } catch (Exception e) {
